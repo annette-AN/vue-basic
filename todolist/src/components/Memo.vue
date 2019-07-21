@@ -4,7 +4,7 @@
     <div class="blind-sec">
       <input class="memo-title" type="text" placeholder="제목" v-model="value.title">
     </div>
-    <input class="memo-description" type="text" placeholder="메모 작성..." v-model="value.desc" @click="value.$open = true">
+    <input class="memo-description" type="text" placeholder="메모 작성..." v-model="value.desc" @click="value.$open = true; (type === 'listitem' && modifyStart());">
     <div class="memo-front-icons">
       <a class="input-icon" href="#" v-tooltip="'새 목록'">
         <i class="far fa-check-square"></i>
@@ -47,8 +47,8 @@
     </div>
     <div class="btn-set">
       <button v-if="type === 'new'" class="memo-save" @click="$emit('add')">저장</button>
-      <button v-else class="memo-save" @click="value.$open = false">수정</button>
-      <button class="memo-close" @click="value.$open = false">닫기</button>
+      <button v-else class="memo-save" @click="modify()">수정</button>
+      <button class="memo-close" @click="type === 'new' ? (value.$open = false) : cancle()">닫기</button>
     </div>
   </div>
 </template>
@@ -58,7 +58,6 @@
   text-align: left;
 }
 </style>
-
 
 <script>
 import $ from 'jquery';
@@ -79,6 +78,26 @@ export default {
   props: {
     type: String,
     value: Object
+  },
+  data:()=>({
+    cacheValue: null
+  }),
+  methods:{
+    //수정 진입
+    modifyStart (){
+      this.cacheValue = { ...this.value };
+    },
+    //수정 완료
+    modify (){
+      this.cacheValue = null;
+      this.value.$open = false;
+    },
+    //수정 취소
+    cancle (){
+      Object.assign(this.value, this.cacheValue);
+      this.value.$open = false;
+    }
   }
 }
+
 </script>
