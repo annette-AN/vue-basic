@@ -2,12 +2,12 @@
   <div class="memo-body" :open="value.$open ? true : false">
     <!--v-tooltip 은 a에 마우스를 hover하면 나타남-->
     <div class="blind-sec">
-      <input class="memo-title" type="text" placeholder="제목" v-model="value.title" ref="titleInput" @focus="handleInputFocus" @blur="handleInputBlur">
+      <input class="memo-title" type="text" placeholder="제목" v-model="value.title">
     </div>
-    <input class="memo-description" type="text" placeholder="메모 작성..." v-model="value.desc" ref="descInput" @focus="handleInputFocus" @blur="handleInputBlur">
+    <input class="memo-description" type="text" placeholder="메모 작성..." v-model="value.desc" @click="value.$open = true; (type === 'listitem' && modifyStart());">
     <div class="memo-front-icons">
       <a class="input-icon" href="#" v-tooltip="'새 목록'">
-        <i class="far fa-check-square"></i>
+        <i class="far fa-check-sßquare"></i>
       </a>
       <a class="input-icon" href="#" v-tooltip="'그림이 있는 새 메모'">
         <i class="fas fa-paint-brush"></i>
@@ -46,60 +46,58 @@
       </a>
     </div>
     <div class="btn-set">
-      <button v-if="type === 'listitem'" class="memo-save" @click="$emit('modify');">수정</button>
-      <button v-if="type === 'new'" class="memo-save" @click="$emit('add');">저장</button>
-      <button class="memo-close" @click="$emit('open'); value.$open = false">닫기</button>
+      <button v-if="type === 'new'" class="memo-save" @click="$emit('add')">저장</button>
+      <button v-else class="memo-save" @click="modify()">수정</button>
+      <button class="memo-close" @click="type === 'new' ? (value.$open = false) : cancle()">닫기</button>
     </div>
   </div>
 </template>
+
+<style>
+.memo-body {
+  text-align: left;
+}
+</style>
 
 <script>
 import $ from 'jquery';
 
 export default {
-  directives:{
-      tooltip(el, vnode){
-          const tooltipText = vnode.value;
-            //툴팁 mouseenter
-          $(el).on('mouseenter',function(){
-              $(this).append('<div class="upload-tooltip">'+tooltipText+'</div>');
-          });
-          //툴팁 mouseleave
-          $(el).on('mouseleave',function(){
-              $('.upload-tooltip', this).remove();
-          });
-      }
+  directives: {
+    tooltip( el, vnode ) {
+      const tooltipText = vnode.value;
+
+      $(el).on('mouseenter', function() {
+        $(this).append('<div class="upload-tooltip">' + tooltipText + '</div>');
+      });
+      $(el).on('mouseleave', function() {
+        $('.upload-tooltip').remove();
+      });
+    }
   },
-  props:{
-      type: String,
-      value: Object
+  props: {
+    type: String,
+    value: Object
   },
-  methods: {
-      handleInputFocus(){
-          const { value, type } = this;
-          value.$open = true;
-          console.log('focusin')
-      },
-      handleInputBlur(){
-          setTimeout(()=>{
-              const { $el, value, type, $refs:{ titleInput, descInput } } = this;
-              console.log('$el.hasFocus',titleInput, descInput)
-              if([titleInput, descInput].includes(document.activeElement)){
-                  return;
-              }
-              if(type === 'listitem'){
-                  value.$open = false;
-              }
-          },100)
-          
-          
-      }
+  data:()=>({
+    cacheValue: null
+  }),
+  methods:{
+    //수정 진입
+    modifyStart (){
+      this.cacheValue = { ...this.value };
+    },
+    //수정 완료
+    modify (){
+      this.cacheValue = null;
+      this.value.$open = false;
+    },
+    //수정 취소
+    cancle (){
+      Object.assign(this.value, this.cacheValue);
+      this.value.$open = false;
+    }
   }
 }
-</script>
 
-<style lang="scss" scoped>
-.memo-body {
-  text-align: left;
-}
-</style>
+</script>

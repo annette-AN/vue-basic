@@ -7,7 +7,7 @@
     <input class="memo-description" type="text" placeholder="메모 작성..." v-model="value.desc" @click="value.$open = true; (type === 'listitem' && modifyStart());">
     <div class="memo-front-icons">
       <a class="input-icon" href="#" v-tooltip="'새 목록'">
-        <i class="far fa-check-square"></i>
+        <i class="far fa-check-sßquare"></i>
       </a>
       <a class="input-icon" href="#" v-tooltip="'그림이 있는 새 메모'">
         <i class="fas fa-paint-brush"></i>
@@ -48,7 +48,7 @@
     <div class="btn-set">
       <button v-if="type === 'new'" class="memo-save" @click="$emit('add')">저장</button>
       <button v-else class="memo-save" @click="modify()">수정</button>
-      <button class="memo-close" @click="type === 'new' ? (value.$open = false) : cancle()">닫기</button>
+      <button class="memo-close" @click="cancle()">닫기</button>
     </div>
   </div>
 </template>
@@ -82,19 +82,19 @@ export default {
   data:()=>({
     cacheValue: null
   }),
-  methods:{
-    //수정 진입
-    modifyStart (){
-      this.cacheValue = { ...this.value };
+  methods: {
+    //수정진입
+    modifyStart() {
+      this.cacheValue = { ...this.value }
     },
-    //수정 완료
-    modify (){
+    //수정완료
+    modify() {
       this.cacheValue = null;
       this.value.$open = false;
     },
-    //수정 취소
-    cancle (){
-      Object.assign(this.value, this.cacheValue);
+    //닫기
+    cancle() {
+      Object.assign( this.value, this.cacheValue );
       this.value.$open = false;
     }
   }
