@@ -22,6 +22,12 @@
               </td>
             </tr>
             <tr>
+              <td>분류</td>
+              <td>
+                <p></p>
+              </td>
+            </tr>
+            <tr>
               <td>파일</td>
               <td>
                 <p><a href="#">파일이름</a><span>oo MB</span><span>다운로드 횟수: <em>oo</em></span></p>

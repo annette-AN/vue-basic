@@ -79,7 +79,7 @@
               <th>등록일시</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody v-for="item in postList">
             <tr>
               <td>5</td>
               <td><a href="#">전사 windows 업그레이드 안내</a></td>

@@ -13,12 +13,12 @@
             <tr>
               <td><label for="title">제목</label></td>
               <td>
-                <input type="text" id="title">
+                <input type="text" id="title" v-model="newPost.title">
               </td>
             </tr>
             <tr>
               <td>분류</td>
-              <td>
+              <td v-model="newPost.type">
                 <label for="use-information">
                   <input type="radio" name="kind-of" id="use-information">
                   이용안내
@@ -48,12 +48,12 @@
             <tr>
               <td><label for="editor">내용</label></td>
               <td>
-                <textarea name="editor" id="editor" cols="30" rows="10"></textarea>
+                <textarea v-model="newPost.desc" name="editor" id="editor" cols="30" rows="10"></textarea>
               </td>
             </tr>
             <tr>
               <td>파일 첨부</td>
-              <td>
+              <td v-model="newPost.file">
                 <div>
                   <ul class="file-preview">
                   <!--  
@@ -87,7 +87,7 @@
             </tr>
             <tr>
               <td>이미지 첨부</td>
-              <td>
+              <td v-model="newPost.image">
                 <div>
                   <ul class="image-preview">
                    <!--  
@@ -130,9 +130,13 @@
             </tr>
           </tbody>
         </table>
-        <button class="list-btn-style">등록</button>
+        <button class="list-btn-style" @click="add">등록</button>
       </section>
   
+    </div>
+
+    <div>
+      <pre v-html="$data"></pre>
     </div>
   </main>
 </template>
@@ -145,6 +149,22 @@
 
 <script>
 export default {
-  
+  data() {
+    return {
+      newPost: this.creatPost(),
+      postList: []
+    }
+  },
+  methods: {
+    creatPost() {
+      return { title: '', type: '', desc: '', file: '', image: '' }
+    },
+    add() {
+      const { newPost, postList } = this;
+      const item = { ...newPost };
+
+      postList.push(item);
+    }
+  }
 }
 </script>
