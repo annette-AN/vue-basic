@@ -2,7 +2,7 @@
   <main class="sub list" id="main">
     <div id="main-wrap">
       <section class="list-horizon">
-        <a href="subpage-write.html" class="list-btn-style write-btn">작성하기</a>
+        <router-link to="/board-write" class="list-btn-style write-btn">작성하기</router-link>
         <table>
           <caption>게시판 검색</caption>
           <colgroup>
@@ -79,36 +79,14 @@
               <th>등록일시</th>
             </tr>
           </thead>
-          <tbody v-for="item in postList">
-            <tr>
-              <td>5</td>
-              <td><a href="#">전사 windows 업그레이드 안내</a></td>
+          <tbody>
+            <tr v-for="(item, index) in postList" @click="$router.push('/board-view/'+(index+1))">
+              <td>{{ index + 1 }}</td>
+              <td>
+                {{ item.title }}
+              </td>
               <td><span>전산팀 박태훈</span></td>
               <td><span>2019-02-10</span></td>
-            </tr>
-            <tr>
-              <td>4</td>
-              <td><a href="#">불법소프트웨어 사용금지 및 소프트웨어 사용요령 불법소프트웨어 사용금지 및 소프트웨어 사용요령</a></td>
-              <td><span>전산팀 박태훈</span></td>
-              <td><span>2019-02-10</span></td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td><a href="#">수습사원 관리 지침</a></td>
-              <td><span>인사팀 이희성</span></td>
-              <td><span>2019-01-25</span></td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td><a href="#">인사평가 제도 지침 v1.3</a></td>
-              <td><span>인사팀 전영조</span></td>
-              <td><span>2019-01-02</span></td>
-            </tr>
-            <tr>
-              <td>1</td>
-              <td><a href="#">사내 동호회 운영규칙 v1.0</a></td>
-              <td><span>인사팀 이희성</span></td>
-              <td><span>2018-09-27</span></td>
             </tr>
           </tbody>
         </table>
@@ -126,12 +104,6 @@
   </main>
 </template>
 
-<style>
-  .list-horizon table td {
-    text-align: left;
-  }
-</style>
-
 <script>
 import axios from 'axios';
 export default {
@@ -147,6 +119,19 @@ export default {
 
     //await axios.get("http://nineten11.net:7000/api/boards")
     
+  },
+  computed: {
+    postList (){
+      const { state:{ postList } } = this.$store;
+      return postList;
+    }
   }
 }
 </script>
+
+<style>
+  .list-horizon table td {
+    text-align: left;
+  }
+</style>
+

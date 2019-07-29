@@ -12,7 +12,7 @@
             <tr>
               <td>제목</td>
               <td>
-                <p></p>
+                <p>{{ post.title }}</p>
               </td>
             </tr>
             <tr>
@@ -53,7 +53,20 @@
     </div>
   </main>
 </template>
-
+<script>
+export default {
+  data: ()=>({
+    post:null
+  }),
+  created (){
+    const id = this.$route.params.id;
+    const indexId = Number(id) - 1;
+    const { state:{ postList } } = this.$store;
+    const post = postList[indexId];
+    this.post = post;    
+  }
+}
+</script>
 <style lang="scss">
 .view {
 
@@ -80,9 +93,3 @@
   }
 }
 </style>
-
-<script>
-export default {
-
-}
-</script>

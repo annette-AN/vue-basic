@@ -18,29 +18,29 @@
             </tr>
             <tr>
               <td>분류</td>
-              <td v-model="newPost.type">
+              <td>
                 <label for="use-information">
-                  <input type="radio" name="kind-of" id="use-information">
+                  <input type="radio" v-model="newPost.type" value="use-information" id="use-information">
                   이용안내
                 </label>
                 <label for="about-member">
-                  <input type="radio" name="kind-of" id="about-member">
+                  <input type="radio" v-model="newPost.type" value="about-member" id="about-member">
                   회원관련
                 </label>
                 <label for="order-etc">
-                  <input type="radio" name="kind-of" id="order-etc">
+                  <input type="radio" v-model="newPost.type" value="order-etc" id="order-etc">
                   주문/결제/배송
                 </label>
                 <label for="refund-etc">
-                  <input type="radio" name="kind-of" id="refund-etc">
+                  <input type="radio" v-model="newPost.type" value="refund-etc" id="refund-etc">
                   교환/환불/반품
                 </label>
                 <label for="saving-money">
-                  <input type="radio" name="kind-of" id="saving-money">
+                  <input type="radio" v-model="newPost.type" value="saving-money" id="saving-money">
                   적립금관련
                 </label>
                 <label for="other">
-                  <input type="radio" name="kind-of" id="other">
+                  <input type="radio" v-model="newPost.type" value="other" id="other">
                   기타
                 </label>
               </td>
@@ -53,7 +53,7 @@
             </tr>
             <tr>
               <td>파일 첨부</td>
-              <td v-model="newPost.file">
+              <td>
                 <div>
                   <ul class="file-preview">
                   <!--  
@@ -81,13 +81,13 @@
                     </li>
                   </ul>
                   <label for="file-up" class="child-text-ir">파일업로드</label>
-                  <input type="file" multiple="multiple" id="file-up">
+                  <input type="file" multiple="multiple" @change="handleChangeFile(newPost, $event)" id="file-up" accept=".word,.ppt,.xls">
                 </div>
               </td>
             </tr>
             <tr>
               <td>이미지 첨부</td>
-              <td v-model="newPost.image">
+              <td>
                 <div>
                   <ul class="image-preview">
                    <!--  
@@ -124,7 +124,7 @@
                     </li>
                   </ul>
                   <label for="image-up" class="child-text-ir">이미지업로드</label>
-                  <input type="file" multiple="multiple" id="image-up">
+                  <input type="file" multiple="multiple" @change="handleChangeImage(newPost, $event)" id="image-up" accept="image/*">
                 </div>
               </td>
             </tr>
@@ -151,19 +151,33 @@
 export default {
   data() {
     return {
-      newPost: this.creatPost(),
-      postList: []
+      newPost: this.creatPost()
     }
   },
   methods: {
     creatPost() {
-      return { title: '', type: '', desc: '', file: '', image: '' }
+      return { title: '', type: null, desc: '', file: '', image: '' }
     },
     add() {
-      const { newPost, postList } = this;
+      const { newPost } = this;
+      const { state:{ postList } } = this.$store;
+      
       const item = { ...newPost };
-
+      
       postList.push(item);
+      this.$router.replace("/board-list");
+    },
+    handleChangeFile (post, event){
+      console.log('post, event',post, event);
+      console.log("event.files",event.target.files);
+      
+      const files = Array.from(event.target.files);
+      post.file = files;
+
+    },
+    handleChangeImage (post, event){
+      const images = Array.from(event.target.files);
+      post.image = images;
     }
   }
 }

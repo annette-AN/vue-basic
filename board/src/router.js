@@ -12,7 +12,7 @@ export default new Router({
       component: () => import('./pages/BoardList.vue')
     },
     {
-      path: '/board-view',
+      path: '/board-view/:id',
       name: 'Board view',
       // route level code-splitting
       // this generates a separate chunk (about.[hash].js) for this route
