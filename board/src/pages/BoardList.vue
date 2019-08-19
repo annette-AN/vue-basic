@@ -2,7 +2,7 @@
   <main class="sub list" id="main">
     <div id="main-wrap">
       <section class="list-horizon">
-        <router-link to="/board-write" class="list-btn-style write-btn">작성하기</router-link>
+        <a @click="$router.push('/board-write')" class="list-btn-style write-btn">작성하기</a>
         <table>
           <caption>게시판 검색</caption>
           <colgroup>
@@ -80,13 +80,11 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in postList" @click="$router.push('/board-view/'+(index+1))">
-              <td>{{ index + 1 }}</td>
-              <td>
-                {{ item.title }}
-              </td>
-              <td><span>전산팀 박태훈</span></td>
-              <td><span>2019-02-10</span></td>
+            <tr v-for="item in postList" @click="$router.push('/board-view/' + item.id )">
+              <td>{{ item.id }}</td>
+              <td><a>{{ item.title }}</a></td>
+              <td><span>인사팀 이희성</span></td>
+              <td><span>2018-09-27</span></td>
             </tr>
           </tbody>
         </table>
@@ -105,33 +103,20 @@
 </template>
 
 <script>
-import axios from 'axios';
 export default {
-  async created (){
-    const session = window.applicationSession;
-    
-    const loginResp = await axios.post("http://nineten11.net:7000/api/user/login",{
-      email:"guest",
-      password:""
-    });
-
-    console.log("loginResp", session, loginResp)
-
-    //await axios.get("http://nineten11.net:7000/api/boards")
-    
-  },
   computed: {
-    postList (){
-      const { state:{ postList } } = this.$store;
+    postList () {
+      const { state : { postList } } = this.$store;
       return postList;
     }
   }
 }
 </script>
 
-<style>
-  .list-horizon table td {
+
+
+<style lang="scss">
+  table td {
     text-align: left;
   }
 </style>
-

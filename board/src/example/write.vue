@@ -20,27 +20,27 @@
               <td>분류</td>
               <td>
                 <label for="use-information">
-                  <input type="radio" v-model="newPost.type" value="use-information" id="use-information">
+                  <input type="radio" v-model="newPost.type" value="use-information" name="kind-of" id="use-information">
                   이용안내
                 </label>
                 <label for="about-member">
-                  <input type="radio" v-model="newPost.type" value="about-member" id="about-member">
+                  <input type="radio" v-model="newPost.type" value="about-member" name="kind-of" id="about-member">
                   회원관련
                 </label>
                 <label for="order-etc">
-                  <input type="radio" v-model="newPost.type" value="order-etc" id="order-etc">
+                  <input type="radio" v-model="newPost.type" value="order-etc" name="kind-of" id="order-etc">
                   주문/결제/배송
                 </label>
                 <label for="refund-etc">
-                  <input type="radio" v-model="newPost.type" value="refund-etc" id="refund-etc">
+                  <input type="radio" v-model="newPost.type" value="refund-etc" name="kind-of" id="refund-etc">
                   교환/환불/반품
                 </label>
                 <label for="saving-money">
-                  <input type="radio" v-model="newPost.type" value="saving-money" id="saving-money">
+                  <input type="radio" v-model="newPost.type" value="saving-money" name="kind-of" id="saving-money">
                   적립금관련
                 </label>
                 <label for="other">
-                  <input type="radio" v-model="newPost.type" value="other" id="other">
+                  <input type="radio" v-model="newPost.type" value="other" name="kind-of" id="other">
                   기타
                 </label>
               </td>
@@ -81,7 +81,7 @@
                     </li>
                   </ul>
                   <label for="file-up" class="child-text-ir">파일업로드</label>
-                  <input type="file" multiple="multiple" @change="handleChangeFile(newPost, $event)" id="file-up" accept=".word,.ppt,.xls">
+                  <input type="file" @change="handleChangeFile( newPost, $event )" multiple="multiple" id="file-up">
                 </div>
               </td>
             </tr>
@@ -124,7 +124,7 @@
                     </li>
                   </ul>
                   <label for="image-up" class="child-text-ir">이미지업로드</label>
-                  <input type="file" multiple="multiple" @change="handleChangeImage(newPost, $event)" id="image-up" accept="image/*">
+                  <input type="file" @change="handleChangeImage( newPost, $event )" multiple="multiple" id="image-up">
                 </div>
               </td>
             </tr>
@@ -132,53 +132,62 @@
         </table>
         <button class="list-btn-style" @click="add">등록</button>
       </section>
-  
-    </div>
 
-    <div>
-      <pre v-html="$data"></pre>
+      <div>
+        <!-- {{ newPost }} -->
+        <pre v-html="$data"></pre>
+      </div>
+  
     </div>
   </main>
 </template>
+
+<script>
+export default {
+  data() {
+    return {
+      newPost: this.created()
+    }
+  },
+  methods: {
+    created() {
+      return { title: '', type: null, desc: '', file: '', img: '' }
+    },
+    add() {
+      const {
+        $store: { dispatch },
+        newPost
+      } = this;
+      //const { newPost } = this;
+      //const { state: { postList } } = this.$store;
+      const item = { ...newPost };
+
+      // postList.push(item);
+      dispatch("add", item);
+
+      // this.newPost = this.created();
+      this.$router.replace('/board-list');
+
+      console.log('this.$store.state', this.$store.state);
+      console.log('item.title', item.title);
+    },
+    handleChangeFile( newPost, $event ){
+      console.log('newPost, $event', newPost, $event);
+      const files = Array.from($event.target.files);
+      newPost.file = files;
+    },
+    handleChangeImage( newPost, $event ){
+      console.log('newPost, $event', newPost, $event);
+      const images = Array.from($event.target.files);
+      newPost.img = images;
+    }
+  }
+}
+</script>
+
 
 <style>
 .write .list-horizon table td {
   text-align: left;
 }
 </style>
-
-<script>
-export default {
-  data() {
-    return {
-      newPost: this.creatPost()
-    }
-  },
-  methods: {
-    creatPost() {
-      return { title: '', type: null, desc: '', file: '', image: '' }
-    },
-    add() {
-      const { newPost } = this;
-      const { state:{ postList } } = this.$store;
-      
-      const item = { ...newPost };
-      
-      postList.push(item);
-      this.$router.replace("/board-list");
-    },
-    handleChangeFile (post, event){
-      console.log('post, event',post, event);
-      console.log("event.files",event.target.files);
-      
-      const files = Array.from(event.target.files);
-      post.file = files;
-
-    },
-    handleChangeImage (post, event){
-      const images = Array.from(event.target.files);
-      post.image = images;
-    }
-  }
-}
-</script>

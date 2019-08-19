@@ -20,27 +20,27 @@
               <td>분류</td>
               <td>
                 <label for="use-information">
-                  <input type="radio" v-model="newPost.type" value="use-information" id="use-information">
+                  <input type="radio" v-model="newPost.type" value="use-information" name="kind-of" id="use-information">
                   이용안내
                 </label>
                 <label for="about-member">
-                  <input type="radio" v-model="newPost.type" value="about-member" id="about-member">
+                  <input type="radio" v-model="newPost.type" value="about-member" name="kind-of" id="about-member">
                   회원관련
                 </label>
                 <label for="order-etc">
-                  <input type="radio" v-model="newPost.type" value="order-etc" id="order-etc">
+                  <input type="radio" v-model="newPost.type" value="order-etc" name="kind-of" id="order-etc">
                   주문/결제/배송
                 </label>
                 <label for="refund-etc">
-                  <input type="radio" v-model="newPost.type" value="refund-etc" id="refund-etc">
+                  <input type="radio" v-model="newPost.type" value="refund-etc" name="kind-of" id="refund-etc">
                   교환/환불/반품
                 </label>
                 <label for="saving-money">
-                  <input type="radio" v-model="newPost.type" value="saving-money" id="saving-money">
+                  <input type="radio" v-model="newPost.type" value="saving-money" name="kind-of" id="saving-money">
                   적립금관련
                 </label>
                 <label for="other">
-                  <input type="radio" v-model="newPost.type" value="other" id="other">
+                  <input type="radio" v-model="newPost.type" value="other" name="kind-of" id="other">
                   기타
                 </label>
               </td>
@@ -55,7 +55,22 @@
               <td>파일 첨부</td>
               <td>
                 <div>
-                  <ul class="file-preview">
+                  <ul class="file-preview" v-for="file in newPost.file">
+                  <!-- ex)
+                    async loginHandler (){
+                      const { id, password } = this;
+                      try {
+                        this.pendingLogin = true;
+                        await sendLogin({ id, password });
+                        this.$router.push("/dashboard");
+                      } catch(e){
+                        alert("아이디 비밀번호를 확인해 주세요.");
+                      } finally {
+                        this.pendingLogin = false;
+                      }
+                    }
+                   -->
+                  
                   <!--  
                     파일 첨부 상태
 
@@ -70,18 +85,16 @@
                       <li class="status-ppt-file">
                         
                    -->
+                   <!-- v-if로 no-file랑 uploading 나오게 하면 될거같음 -->
                     <li class="status-no-file"><span><i class="fas fa-exclamation-triangle d-yellow"><span class="child-text-ir">빈 파일 아이콘</span></i><em>No file</em></span></li>
                     <li class="status-file-uploading"><span><i class="fas fa-spinner d-yellow"><span class="child-text-ir">로딩중 아이콘</span></i><em>Uploading...</em></span></li>
-                    <li class="status-text-file"><span><i class="far fa-file-alt"><span class="child-text-ir">파일 아이콘</span></i><em>선택한 파일명.word</em></span>
-                      <span class="file-size"><span>1.44</span> <span>MB</span></span>
-                    </li>
-                    <li class="status-ppt-file"><span><i class="far fa-file-powerpoint"><span class="child-text-ir">파일 아이콘</span></i><em>선택한 파일명.ppt</em></span>
-                      <span class="file-size"><span>1.44</span> <span>MB</span></span>
+                    <li class="status-ppt-file"><span><i class="far fa-file-powerpoint"><span class="child-text-ir">파일 아이콘</span></i><em>{{ file.name }}</em></span>
+                      <span class="file-size"><span>{{ changeBytes ( file.size ) }}</span> </span>
                       <button class="file-delete"><i class="fas fa-times"><span class="child-text-ir">닫기 아이콘</span></i></button>
                     </li>
                   </ul>
                   <label for="file-up" class="child-text-ir">파일업로드</label>
-                  <input type="file" multiple="multiple" @change="handleChangeFile(newPost, $event)" id="file-up" accept=".word,.ppt,.xls">
+                  <input @change="handleFileChange( newPost, $event )" type="file" multiple="multiple" id="file-up">
                 </div>
               </td>
             </tr>
@@ -89,7 +102,7 @@
               <td>이미지 첨부</td>
               <td>
                 <div>
-                  <ul class="image-preview">
+                  <ul class="image-preview" v-for="file in newPost.img">
                    <!--  
                     이미지 첨부 상태
 
@@ -111,74 +124,134 @@
                       <div><i class="fas fa-spinner d-green"><span class="child-text-ir">로딩중 아이콘</span></i></div>
                       <span><i class="fas fa-spinner d-yellow"><span class="child-text-ir">로딩중 아이콘</span></i><em>Uploading...</em></span>
                     </li>
-                    <li class="status-attached-image">
-                      <div><img src="@/assets/img/c.jpg" alt=""></div>
-                      <span><i class="fas fa-file-image"><span class="child-text-ir">이미지 아이콘</span></i><em>파일명</em></span>
-                      <span class="file-size"><span>1.44</span> <span>MB</span></span>
-                    </li>
                     <li class="status-attached-image-fix">
                       <div><img src="@/assets/img/c.jpg" alt=""></div>
-                      <span><i class="fas fa-file-image"><span class="child-text-ir">이미지 아이콘</span></i><em>파일명</em></span>
-                      <span class="file-size"><span>1.44</span> <span>MB</span></span>
+                      <span><i class="fas fa-file-image"><span class="child-text-ir">이미지 아이콘</span></i><em>{{ file.name }}}</em></span>
+                      <span class="file-size"><span>{{ changeBytes ( file.size ) }}</span></span>
                       <button class="file-delete"><i class="fas fa-times"><span class="child-text-ir">닫기 아이콘</span></i></button>
                     </li>
                   </ul>
                   <label for="image-up" class="child-text-ir">이미지업로드</label>
-                  <input type="file" multiple="multiple" @change="handleChangeImage(newPost, $event)" id="image-up" accept="image/*">
+                  <input @change="handleImageChange( newPost, $event )" type="file" multiple="multiple" id="image-up">
                 </div>
               </td>
             </tr>
           </tbody>
         </table>
-        <button class="list-btn-style" @click="add">등록</button>
+        <template v-if="!isModifyMode">
+          <button class="list-btn-style" @click="add()">등록</button>
+        </template>
+        <template v-if="isModifyMode" class="buttons">
+          <button class="btn-style" @click="modify()">수정</button>
+          <button class="btn-style" @click="cancle()">취소</button>
+        </template>
       </section>
-  
-    </div>
 
-    <div>
-      <pre v-html="$data"></pre>
+      <div>
+        <pre v-html="$data"></pre>
+      </div>
+  
     </div>
   </main>
 </template>
-
-<style>
-.write .list-horizon table td {
-  text-align: left;
-}
-</style>
 
 <script>
 export default {
   data() {
     return {
-      newPost: this.creatPost()
+      newPost: this.creatPost(),
+      cachePost: null
+    }
+  },
+  computed: {
+    isModifyMode () {
+      //유무확인, param.id가 있으면 없으면
+      const id = this.$route.params.id;
+      return id ? true : false;
+    }
+  },
+  created () {
+    const { isModifyMode } = this;
+    const { $store: { state: { postList } }, $route: { params: { id } } } = this;
+    
+    if(isModifyMode){
+      const post = postList.find(listItem=>{
+        return listItem.id === Number(id);
+      });
+
+      this.newPost = post;
+      this.modifyStart();
+    } else {
+      this.$router.push('/board-write');
     }
   },
   methods: {
-    creatPost() {
-      return { title: '', type: null, desc: '', file: '', image: '' }
+    creatPost () {
+      return { title: '', type: null, desc: '', file: [], img: [] }
     },
-    add() {
-      const { newPost } = this;
-      const { state:{ postList } } = this.$store;
-      
-      const item = { ...newPost };
-      
-      postList.push(item);
-      this.$router.replace("/board-list");
-    },
-    handleChangeFile (post, event){
-      console.log('post, event',post, event);
-      console.log("event.files",event.target.files);
-      
-      const files = Array.from(event.target.files);
-      post.file = files;
+    handleFileChange( newPost, $event ) {
+      // console.log('newPost, $event', newPost, $event);
+      // console.log('file', $event.target.files);
 
+      const files = Array.from($event.target.files);
+      newPost.file = files;
+
+      // Array.isArray($event.target.files);
+      // console.log(Array.isArray($event.target.fileS));
     },
-    handleChangeImage (post, event){
-      const images = Array.from(event.target.files);
-      post.image = images;
+    changeBytes ( size ) {
+      if (size < 1024) return size + " Bytes";
+      else if(size < 1048576) return(size / 1024).toFixed(3) + " KB";
+      else if(size < 1073741824) return(size / 1048576).toFixed(3) + " MB";
+    },
+    handleImageChange( newPost, $event ) {
+      const files = Array.from($event.target.files);
+      newPost.img = files;
+    },
+    add () {
+      const { newPost, $store: { dispatch } } = this;
+      const item = { ...newPost };
+
+      dispatch('add', item);
+      this.$router.replace('/board-list');
+      // console.log('$store.state.postList', this.$store.state.postList)
+    },
+    modifyStart () {
+      this.cachePost = { ...this.newPost };
+    },
+    modify () {
+      this.cachePost = null;
+      // console.log('cachePost', this.cachePost);
+      this.$router.push('/board-view/' + this.newPost.id );
+    },
+    cancle () {
+      // console.log(`this.newPost, this.cachePost`, this.newPost, this.cachePost);
+      Object.assign(this.newPost, this.cachePost);
+      this.$router.push('/board-view/' + this.newPost.id );
+
     }
   }
 }
 </script>
+
+
+<style lang="scss">
+.write {
+  text-align: left;
+  .list-horizon table td {
+
+  }
+
+  .btn-style {
+    margin: 10px;
+    padding: 5px 20px;
+    background: pink;
+  }
+
+  .file-size {
+    width: fit-content;
+    padding: 2px 5px;
+  }
+}
+
+</style>

@@ -2,7 +2,7 @@
   <main class="sub list" id="main">
     <div id="main-wrap">
       <section class="list-horizon">
-        <router-link to="/board-write" class="list-btn-style write-btn">작성하기</router-link>
+        <a class="list-btn-style write-btn" @click="$router.push('/board-write')">작성하기</a>
         <table>
           <caption>게시판 검색</caption>
           <colgroup>
@@ -62,7 +62,7 @@
         </table>
         <button class="list-btn-style search-btn">검색</button>
       </section>
-  
+
       <section class="list-board">
         <table>
           <caption class="child-text-ir">게시글 리스트</caption>
@@ -80,11 +80,9 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in postList" @click="$router.push('/board-view/'+(index+1))">
-              <td>{{ index + 1 }}</td>
-              <td>
-                {{ item.title }}
-              </td>
+            <tr v-for="(item, index) in postList" @click="$router.push('/board-view/'+(index + 1))">
+              <td>{{ item.id }}</td>
+              <td><a>{{ item.title }}</a></td>
               <td><span>전산팀 박태훈</span></td>
               <td><span>2019-02-10</span></td>
             </tr>
@@ -105,7 +103,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 export default {
   async created (){
     const session = window.applicationSession;
@@ -121,17 +118,16 @@ export default {
     
   },
   computed: {
-    postList (){
-      const { state:{ postList } } = this.$store;
+    postList() {
+      const { state: {postList} } = this.$store;
       return postList;
     }
   }
 }
 </script>
 
-<style>
-  .list-horizon table td {
+<style lang="scss">
+  table td {
     text-align: left;
   }
 </style>
-

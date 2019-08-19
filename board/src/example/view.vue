@@ -11,64 +11,93 @@
           <tbody>
             <tr>
               <td>제목</td>
-              <td>
-                <p>{{ post.title }}</p>
-              </td>
+              <td>{{ post.title }}</td>
             </tr>
             <tr>
               <td>작성자</td>
               <td>
-                <p></p>
+                <p>운영자</p>
               </td>
             </tr>
             <tr>
               <td>분류</td>
               <td>
-                <p></p>
+                <p>{{ post.type }}</p>
               </td>
             </tr>
             <tr>
               <td>파일</td>
               <td>
-                <p><a href="#">파일이름</a><span>oo MB</span><span>다운로드 횟수: <em>oo</em></span></p>
+                <!-- file 안에 있는 name, size를 가져오고 싶음 -->
+                <p><a href="#">{{ post.file }}</a><span>oo MB</span><span>다운로드 횟수: <em>oo</em></span></p>
+                <p><a href="#">{{ post.image }}</a><span>oo MB</span><span>다운로드 횟수: <em>oo</em></span></p>
               </td>
             </tr>
             <tr>
               <td>내용</td>
               <td>
                 <p>
-                  게시글 내용입니다.<br>
-                  이미지도 보입니다.<br>
+                  {{ post.desc }}<br>
+                  {{ post.image }}<br>
                 </p>
               </td>
             </tr>
           </tbody>
         </table>
         <div class="buttons">
-          <button>수정</button>
-          <button>삭제</button>
+          <button @click="modify(post)">수정</button>
+          <button @click="remove(post)">삭제</button>
         </div>
       </section>
 
     </div>
   </main>
 </template>
+
 <script>
+import { type } from 'os';
 export default {
-  data: ()=>({
-    post:null
+  data : ()=>({
+    post: null
   }),
-  created (){
-    const id = this.$route.params.id;
-    const indexId = Number(id) - 1;
-    const { state:{ postList } } = this.$store;
-    const post = postList[indexId];
-    this.post = post;    
+  created () {
+    const {
+      $route: { params: { id } },
+      $store: { state: { postList } }
+    } = this;
+
+    const post = postList.find(listItem=>{
+      return listItem.id === Number(id);
+    });
+
+    const post = postList.find(matchRule);
+
+    // type value를 한글로 고치고 싶음
+
+    this.post = { ...post };
+
+    // console.log('post.title', post);
+    // console.log('id', $route.params.id);
+    console.log('post.file', post.file);
+  },
+  methods: {
+    modify (target) {
+      // $router.push('/board-write/2');
+      //write로 넘어와서 수정
+
+    },
+    remove (target) {
+      //TypeError: this.post.filter is not a function
+      
+      this.$store.state.postList = (this.$store.state.postList).filter((post) => post !== target );
+      $router.replace('/board-list');
+    }
   }
 }
 </script>
+
 <style lang="scss">
-.view {
+.view { 
 
   .list-horizon table td {
     text-align: left;
