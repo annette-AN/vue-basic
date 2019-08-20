@@ -55,7 +55,7 @@
               <td>파일 첨부</td>
               <td>
                 <div>
-                  <ul class="file-preview" v-for="file in newPost.file">
+                  <ul class="file-preview">
                   <!-- ex)
                     async loginHandler (){
                       const { id, password } = this;
@@ -86,12 +86,21 @@
                         
                    -->
                    <!-- v-if로 no-file랑 uploading 나오게 하면 될거같음 -->
-                    <li class="status-no-file"><span><i class="fas fa-exclamation-triangle d-yellow"><span class="child-text-ir">빈 파일 아이콘</span></i><em>No file</em></span></li>
-                    <li class="status-file-uploading"><span><i class="fas fa-spinner d-yellow"><span class="child-text-ir">로딩중 아이콘</span></i><em>Uploading...</em></span></li>
-                    <li class="status-ppt-file"><span><i class="far fa-file-powerpoint"><span class="child-text-ir">파일 아이콘</span></i><em>{{ file.name }}</em></span>
-                      <span class="file-size"><span>{{ changeBytes ( file.size ) }}</span> </span>
-                      <button class="file-delete"><i class="fas fa-times"><span class="child-text-ir">닫기 아이콘</span></i></button>
-                    </li>
+                    <template v-if="!newPost.file.length">
+                      <li class="status-no-file"><span><i class="fas fa-exclamation-triangle d-yellow"><span class="child-text-ir">빈 파일 아이콘</span></i><em>No file</em></span></li>
+                    </template>
+                    <template v-else>
+                      <template v-for="file in newPost.file">
+                        <li v-if="file.loading === true" class="status-file-uploading">
+                          <span><i class="fas fa-spinner d-yellow"><span class="child-text-ir">로딩중 아이콘</span></i><em>Uploading...</em></span>
+                        </li>
+                        <li v-else class="status-ppt-file">
+                          <span><i class="far fa-file-powerpoint"><span class="child-text-ir">파일 아이콘</span></i><em>{{ file.name }}</em></span>
+                          <span class="file-size"><span>{{ changeBytes ( file.size ) }}</span> </span>
+                          <button class="file-delete"><i class="fas fa-times"><span class="child-text-ir">삭제 아이콘</span></i></button>
+                        </li>
+                      </template>
+                    </template>
                   </ul>
                   <label for="file-up" class="child-text-ir">파일업로드</label>
                   <input @change="handleFileChange( newPost, $event )" type="file" multiple="multiple" id="file-up">
@@ -126,9 +135,9 @@
                     </li>
                     <li class="status-attached-image-fix">
                       <div><img src="@/assets/img/c.jpg" alt=""></div>
-                      <span><i class="fas fa-file-image"><span class="child-text-ir">이미지 아이콘</span></i><em>{{ file.name }}}</em></span>
+                      <span><i class="fas fa-file-image"><span class="child-text-ir">이미지 아이콘</span></i><em>{{ file.name }}</em></span>
                       <span class="file-size"><span>{{ changeBytes ( file.size ) }}</span></span>
-                      <button class="file-delete"><i class="fas fa-times"><span class="child-text-ir">닫기 아이콘</span></i></button>
+                      <button class="file-delete"><i class="fas fa-times"><span class="child-text-ir">삭제 아이콘</span></i></button>
                     </li>
                   </ul>
                   <label for="image-up" class="child-text-ir">이미지업로드</label>
@@ -138,13 +147,15 @@
             </tr>
           </tbody>
         </table>
-        <template v-if="!isModifyMode">
-          <button class="list-btn-style" @click="add()">등록</button>
-        </template>
-        <template v-if="isModifyMode" class="buttons">
-          <button class="btn-style" @click="modify()">수정</button>
-          <button class="btn-style" @click="cancle()">취소</button>
-        </template>
+        <div class="buttons">
+          <template v-if="!isModifyMode">
+            <button class="list-btn-style" @click="add()">등록</button>
+          </template>
+          <template v-if="isModifyMode">
+            <button class="btn" @click="modify()">완료</button>
+            <button class="btn" @click="cancle()">취소</button>
+          </template>
+        </div>
       </section>
 
       <div>
@@ -194,15 +205,31 @@ export default {
       // console.log('file', $event.target.files);
 
       const files = Array.from($event.target.files);
-      newPost.file = files;
 
+      files.forEach((refFile)=>{
+        const { lastModified, lastModifiedDate, name, size, type, webkitRelativePath } = refFile;
+        const file = {
+          lastModified, lastModifiedDate, name, size, type, webkitRelativePath,
+          loading: true,
+          ref:refFile
+        };
+
+        newPost.file.push(file);
+
+        setTimeout(()=>{
+          console.log('file uploaded');
+          file.loading = false;
+        },2000);
+      })
+      
+      //newPost.file = files;
       // Array.isArray($event.target.files);
       // console.log(Array.isArray($event.target.fileS));
     },
     changeBytes ( size ) {
       if (size < 1024) return size + " Bytes";
-      else if(size < 1048576) return(size / 1024).toFixed(3) + " KB";
-      else if(size < 1073741824) return(size / 1048576).toFixed(3) + " MB";
+      else if(size < 1048576) return(size / 1024).toFixed(0) + " KB";
+      else if(size < 1073741824) return(size / 1048576).toFixed(2) + " MB";
     },
     handleImageChange( newPost, $event ) {
       const files = Array.from($event.target.files);
@@ -233,25 +260,3 @@ export default {
   }
 }
 </script>
-
-
-<style lang="scss">
-.write {
-  text-align: left;
-  .list-horizon table td {
-
-  }
-
-  .btn-style {
-    margin: 10px;
-    padding: 5px 20px;
-    background: pink;
-  }
-
-  .file-size {
-    width: fit-content;
-    padding: 2px 5px;
-  }
-}
-
-</style>

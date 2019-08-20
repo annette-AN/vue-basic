@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import Vuex from "vuex";
-
 Vue.use(Vuex);
+
+import { typeOptions } from  '@/constants/options';
 
 export default new Vuex.Store({
   strict: false,
@@ -20,11 +21,7 @@ export default new Vuex.Store({
   //computed like
   getters: {
     typeOptions (){
-      return [
-        { value: "order-etc", label:"교환/환불/반품" },
-        { value: "order-etc", label:"교환/환불/반품" },
-        { value: "order-etc", label:"교환/환불/반품" },
-      ];
+      return typeOptions;
     }
   }
 });

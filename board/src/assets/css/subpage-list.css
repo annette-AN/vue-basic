@@ -36,8 +36,8 @@ table i {
   font-size: inherit;
 }
 
-header.open + main {
-  padding: 2% 8%;
+header.open + main.sub {
+  /* padding: 2% 8%; */
 }
 
 .list-horizon {

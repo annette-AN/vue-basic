@@ -112,11 +112,3 @@ export default {
   }
 }
 </script>
-
-
-
-<style lang="scss">
-  table td {
-    text-align: left;
-  }
-</style>

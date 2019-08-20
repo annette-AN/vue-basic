@@ -36,7 +36,10 @@
               <td>
                 <!-- 5자리로 -->
                 <p v-for="file in post.file" class="file-basket">
-                  <a>{{ file.name }}</a> <span class="file-size">{{ changeBytes ( file.size ) }}</span><span>다운로드 횟수: <em>oo</em></span>
+                  <a>{{ file.name }}</a> <span class="file-size">{{ changeBytes ( file.size ) }}</span></span>
+                </p>
+                <p v-for="file in post.img" class="file-basket">
+                  <a>{{ file.name }}</a> <span class="file-size">{{ changeBytes ( file.size ) }}</span></span>
                 </p>
               </td>
             </tr>
@@ -44,16 +47,15 @@
               <td>내용</td>
               <td>
                 <p>
-                  {{ post.desc }} <br>
-                  {{ post.img }}
+                  {{ post.desc }}
                 </p>
               </td>
             </tr>
           </tbody>
         </table>
         <div class="buttons">
-          <button @click="modify(post)">수정</button>
-          <button @click="remove(post)">삭제</button>
+          <button class="btn" @click="modify(post)">수정</button>
+          <button class="btn" @click="remove(post)">삭제</button>
         </div>
       </section>
 
@@ -63,21 +65,23 @@
 
 <script>
 import { appendFile } from 'fs';
+import { typeOptions } from  '@/constants/options';
+
 export default {
   data : ()=> ({
     post: null
   }),
-  // filters: {
-  //   postType (value){
-  //     const option = this.$store.getters.typeOptions.find(({ value:optValue })=>{
-  //       return optValue === value;
-  //     });
-  //     if(!option) {
-  //       return "-";
-  //     }
-  //     return option.label;
-  //   }
-  // },
+  filters: {
+    postType (value){
+      const option = typeOptions.find(({ value:optValue })=>{
+        return optValue === value;
+      });
+      if(!option) {
+        return "-";
+      }
+      return option.label;
+    }
+  },
   // methods:{},
   computed:{},
   created () {
@@ -124,45 +128,3 @@ export default {
   // }
 }
 </script>
-
-
-
-<style lang="scss">
-.view {
-
-  .list-horizon table td {
-    text-align: left;
-
-    &:first-child {
-      background: pink;
-    }
-  }
-
-  .buttons {
-    margin: 20px auto;
-
-    button {
-      width: 50px;
-      background: pink;
-
-    }
-
-    button+button {
-      margin-left: 20px;
-    }
-  }
-
-  .file-basket {
-    a {
-      display: inline-block;
-      border-bottom: 1px solid rgb(156, 152, 152);
-    }
-    .file-size {
-      display: inline-block;
-      width: fit-content;
-      padding: 2px 5px;
-      margin-left: 10px;
-    }
-  }
-}
-</style>
