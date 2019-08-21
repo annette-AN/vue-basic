@@ -19,10 +19,6 @@ a {
   color: inherit;
 }
 
-a:focus {
-  outline: 2px solid red;
-}
-
 input, button, select {
   display: inline-block;
   margin: 0px;
@@ -621,6 +617,9 @@ header.open + main {
 }
 
 @media all and (min-width: 320px) and (max-width: 767px) {
+  main.open, main.open.sub {
+    margin-left: 50px;
+  }
   main {
     margin-left: 0px;
     padding: 16px;

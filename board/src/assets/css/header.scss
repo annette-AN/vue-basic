@@ -605,6 +605,10 @@ header.open + main {
 }
 
 @media all and (min-width: 320px) and (max-width: 767px) {
+  main.open, main.open.sub {
+    margin-left: 50px;
+  }
+
   main {
     margin-left: 0px;
     padding: 16px;

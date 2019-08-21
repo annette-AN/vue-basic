@@ -4,7 +4,6 @@
       <section class="list-horizon">
         <table>
           <colgroup>
-            <!-- 모바일버전일때 width 100으로 스크립트 -->
             <col style="width:150px;">
             <col>
           </colgroup>
@@ -34,7 +33,6 @@
             <tr>
               <td>파일</td>
               <td>
-                <!-- 5자리로 -->
                 <p v-for="file in post.file" class="file-basket">
                   <a>{{ file.name }}</a> <span class="file-size">{{ changeBytes ( file.size ) }}</span></span>
                 </p>
@@ -82,7 +80,6 @@ export default {
       return option.label;
     }
   },
-  // methods:{},
   computed:{},
   created () {
     this.$el === undefined;
@@ -101,8 +98,6 @@ export default {
     }
 
     this.post = { ...post };
-
-    // console.log('file', post.file);
   },
   methods: {
     modify (target) {
@@ -122,9 +117,5 @@ export default {
       else if(size < 1073741824) return(size / 1048576).toFixed(3) + " MB";
     }
   }
-  // ,
-  // mounted (){
-  //   this.$el !== undefined;
-  // }
 }
 </script>

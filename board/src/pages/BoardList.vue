@@ -92,8 +92,6 @@
             <a class="page-prev" href="#"><img src="@/assets/img/icon/Arrow-Gray-Left.png" alt="리스트 이전버튼"></a>
           <ul>
             <li><a href="#">1</a></li>
-            <!-- <li><a href="#">2</a></li> -->
-            <!-- <li><a href="#">3</a></li> -->
           </ul>
             <a class="page-next" href="#"><img src="@/assets/img/icon/Arrow-Gray-Right.png" alt="리스트 다음버튼"></a>
         </div>

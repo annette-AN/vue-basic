@@ -11,7 +11,11 @@
           <tbody>
             <tr>
               <td>제목</td>
-              <td>{{ post.title }}</td>
+              <td>
+                <p>
+                  {{ post.title }}
+                </p>
+              </td>
             </tr>
             <tr>
               <td>작성자</td>
@@ -22,31 +26,36 @@
             <tr>
               <td>분류</td>
               <td>
-                <p>{{ post.type }}</p>
+                <p>
+                  {{ post.type | postType }}
+                </p>
               </td>
             </tr>
             <tr>
               <td>파일</td>
               <td>
-                <!-- file 안에 있는 name, size를 가져오고 싶음 -->
-                <p><a href="#">{{ post.file }}</a><span>oo MB</span><span>다운로드 횟수: <em>oo</em></span></p>
-                <p><a href="#">{{ post.image }}</a><span>oo MB</span><span>다운로드 횟수: <em>oo</em></span></p>
+                <!-- 5자리로 -->
+                <p v-for="file in post.file" class="file-basket">
+                  <a>{{ file.name }}</a> <span class="file-size">{{ changeBytes ( file.size ) }}</span></span>
+                </p>
+                <p v-for="file in post.img" class="file-basket">
+                  <a>{{ file.name }}</a> <span class="file-size">{{ changeBytes ( file.size ) }}</span></span>
+                </p>
               </td>
             </tr>
             <tr>
               <td>내용</td>
               <td>
                 <p>
-                  {{ post.desc }}<br>
-                  {{ post.image }}<br>
+                  {{ post.desc }}
                 </p>
               </td>
             </tr>
           </tbody>
         </table>
         <div class="buttons">
-          <button @click="modify(post)">수정</button>
-          <button @click="remove(post)">삭제</button>
+          <button class="btn" @click="modify(post)">수정</button>
+          <button class="btn" @click="remove(post)">삭제</button>
         </div>
       </section>
 
@@ -55,70 +64,67 @@
 </template>
 
 <script>
-import { type } from 'os';
+import { appendFile } from 'fs';
+import { typeOptions } from  '@/constants/options';
+
 export default {
-  data : ()=>({
+  data : ()=> ({
     post: null
   }),
+  filters: {
+    postType (value){
+      const option = typeOptions.find(({ value:optValue })=>{
+        return optValue === value;
+      });
+      if(!option) {
+        return "-";
+      }
+      return option.label;
+    }
+  },
+  // methods:{},
+  computed:{},
   created () {
+    this.$el === undefined;
     const {
-      $route: { params: { id } },
-      $store: { state: { postList } }
+      $store: { state: { postList } },
+      $route: { params: { id } }
     } = this;
 
     const post = postList.find(listItem=>{
       return listItem.id === Number(id);
     });
 
-    const post = postList.find(matchRule);
-
-    // type value를 한글로 고치고 싶음
+    if(!post){
+      this.post = { title:"게시물을 찾을 수 없습니다.", file:[], image:[] };
+      return;
+    }
 
     this.post = { ...post };
 
-    // console.log('post.title', post);
-    // console.log('id', $route.params.id);
-    console.log('post.file', post.file);
+    // console.log('file', post.file);
   },
   methods: {
     modify (target) {
-      // $router.push('/board-write/2');
-      //write로 넘어와서 수정
-
+      this.$router.push('/board-write/' + this.post.id)
     },
     remove (target) {
-      //TypeError: this.post.filter is not a function
-      
-      this.$store.state.postList = (this.$store.state.postList).filter((post) => post !== target );
+      const { 
+        $store: { state },
+        $router
+       } = this;
+      state.postList = state.postList.filter((post) => post.id !== target.id );
       $router.replace('/board-list');
+    },
+    changeBytes ( size ) {
+      if (size < 1024) return size + " Bytes";
+      else if(size < 1048576) return(size / 1024).toFixed(3) + " KB";
+      else if(size < 1073741824) return(size / 1048576).toFixed(3) + " MB";
     }
   }
+  // ,
+  // mounted (){
+  //   this.$el !== undefined;
+  // }
 }
 </script>
-
-<style lang="scss">
-.view { 
-
-  .list-horizon table td {
-    text-align: left;
-
-    &:first-child {
-      background: pink;
-    }
-  }
-
-  .buttons {
-    margin: 20px auto;
-
-    button {
-      width: 50px;
-      background: pink;
-
-    }
-
-    button+button {
-      margin-left: 20px;
-    }
-  }
-}
-</style>

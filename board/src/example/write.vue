@@ -56,6 +56,21 @@
               <td>
                 <div>
                   <ul class="file-preview">
+                  <!-- ex)
+                    async loginHandler (){
+                      const { id, password } = this;
+                      try {
+                        this.pendingLogin = true;
+                        await sendLogin({ id, password });
+                        this.$router.push("/dashboard");
+                      } catch(e){
+                        alert("아이디 비밀번호를 확인해 주세요.");
+                      } finally {
+                        this.pendingLogin = false;
+                      }
+                    }
+                   -->
+                  
                   <!--  
                     파일 첨부 상태
 
@@ -70,18 +85,25 @@
                       <li class="status-ppt-file">
                         
                    -->
-                    <li class="status-no-file"><span><i class="fas fa-exclamation-triangle d-yellow"><span class="child-text-ir">빈 파일 아이콘</span></i><em>No file</em></span></li>
-                    <li class="status-file-uploading"><span><i class="fas fa-spinner d-yellow"><span class="child-text-ir">로딩중 아이콘</span></i><em>Uploading...</em></span></li>
-                    <li class="status-text-file"><span><i class="far fa-file-alt"><span class="child-text-ir">파일 아이콘</span></i><em>선택한 파일명.word</em></span>
-                      <span class="file-size"><span>1.44</span> <span>MB</span></span>
-                    </li>
-                    <li class="status-ppt-file"><span><i class="far fa-file-powerpoint"><span class="child-text-ir">파일 아이콘</span></i><em>선택한 파일명.ppt</em></span>
-                      <span class="file-size"><span>1.44</span> <span>MB</span></span>
-                      <button class="file-delete"><i class="fas fa-times"><span class="child-text-ir">닫기 아이콘</span></i></button>
-                    </li>
+                   <!-- v-if로 no-file랑 uploading 나오게 하면 될거같음 -->
+                    <template v-if="!newPost.file.length">
+                      <li class="status-no-file"><span><i class="fas fa-exclamation-triangle d-yellow"><span class="child-text-ir">빈 파일 아이콘</span></i><em>No file</em></span></li>
+                    </template>
+                    <template v-else>
+                      <template v-for="file in newPost.file">
+                        <li v-if="file.loading === true" class="status-file-uploading">
+                          <span><i class="fas fa-spinner d-yellow"><span class="child-text-ir">로딩중 아이콘</span></i><em>Uploading...</em></span>
+                        </li>
+                        <li v-else class="status-ppt-file">
+                          <span><i class="far fa-file-powerpoint"><span class="child-text-ir">파일 아이콘</span></i><em>{{ file.name }}</em></span>
+                          <span class="file-size"><span>{{ changeBytes ( file.size ) }}</span> </span>
+                          <button @click="fileDelete(file)" class="file-delete"><i class="fas fa-times"><span class="child-text-ir">삭제 아이콘</span></i></button>
+                        </li>
+                      </template>
+                    </template>
                   </ul>
                   <label for="file-up" class="child-text-ir">파일업로드</label>
-                  <input type="file" @change="handleChangeFile( newPost, $event )" multiple="multiple" id="file-up">
+                  <input @change="handleFileChange( newPost, $event )" type="file" multiple="multiple" id="file-up">
                 </div>
               </td>
             </tr>
@@ -103,38 +125,46 @@
                       <li class="status-attached-image"> : 삭제버튼 없음
                       <li class="status-attached-image-fix"> : 삭제버튼있음
                    -->
-                    <li class="status-no-image">
-                      <div><i class="far fa-file d-yellow"><span class="child-text-ir">빈 이미지 아이콘</span></i></div>
-                      <span><i class="fas fa-exclamation-triangle d-yellow"><span class="child-text-ir">빈 파일 아이콘</span></i><em>No image</em></span>
-                    </li>
-                    <li class="status-image-uploading">
-                      <div><i class="fas fa-spinner d-green"><span class="child-text-ir">로딩중 아이콘</span></i></div>
-                      <span><i class="fas fa-spinner d-yellow"><span class="child-text-ir">로딩중 아이콘</span></i><em>Uploading...</em></span>
-                    </li>
-                    <li class="status-attached-image">
-                      <div><img src="@/assets/img/c.jpg" alt=""></div>
-                      <span><i class="fas fa-file-image"><span class="child-text-ir">이미지 아이콘</span></i><em>파일명</em></span>
-                      <span class="file-size"><span>1.44</span> <span>MB</span></span>
-                    </li>
-                    <li class="status-attached-image-fix">
-                      <div><img src="@/assets/img/c.jpg" alt=""></div>
-                      <span><i class="fas fa-file-image"><span class="child-text-ir">이미지 아이콘</span></i><em>파일명</em></span>
-                      <span class="file-size"><span>1.44</span> <span>MB</span></span>
-                      <button class="file-delete"><i class="fas fa-times"><span class="child-text-ir">닫기 아이콘</span></i></button>
-                    </li>
+                    <template v-if="!newPost.img.length">
+                      <li class="status-no-image">
+                        <div><i class="far fa-file d-yellow"><span class="child-text-ir">빈 이미지 아이콘</span></i></div>
+                        <span><i class="fas fa-exclamation-triangle d-yellow"><span class="child-text-ir">빈 파일 아이콘</span></i><em>No image</em></span>
+                      </li>
+                    </template>
+                    <template v-else>
+                      <template v-for="file in newPost.img">
+                        <li v-if="file.loading === true" class="status-image-uploading">
+                          <div><i class="fas fa-spinner d-green"><span class="child-text-ir">로딩중 아이콘</span></i></div>
+                          <span><i class="fas fa-spinner d-yellow"><span class="child-text-ir">로딩중 아이콘</span></i><em>Uploading...</em></span>
+                        </li>
+                        <li v-else class="status-attached-image-fix">
+                          <div><img :src="file.src" alt=""></div>
+                          <span><i class="fas fa-file-image"><span class="child-text-ir">이미지 아이콘</span></i><em>{{ file.name }}</em></span>
+                          <span class="file-size"><span>{{ changeBytes ( file.size ) }}</span></span>
+                          <button @click="imgDelete(file)" class="file-delete"><i class="fas fa-times"><span class="child-text-ir">삭제 아이콘</span></i></button>
+                        </li>
+                      </template>
+                    </template>
                   </ul>
                   <label for="image-up" class="child-text-ir">이미지업로드</label>
-                  <input type="file" @change="handleChangeImage( newPost, $event )" multiple="multiple" id="image-up">
+                  <input @change="handleImageChange( newPost, $event )" type="file" multiple="multiple" id="image-up">
                 </div>
               </td>
             </tr>
           </tbody>
         </table>
-        <button class="list-btn-style" @click="add">등록</button>
+        <div class="buttons">
+          <template v-if="!isModifyMode">
+            <button class="list-btn-style" @click="add()">등록</button>
+          </template>
+          <template v-if="isModifyMode">
+            <button class="btn" @click="modify()">완료</button>
+            <button class="btn" @click="cancle()">취소</button>
+          </template>
+        </div>
       </section>
 
       <div>
-        <!-- {{ newPost }} -->
         <pre v-html="$data"></pre>
       </div>
   
@@ -146,48 +176,133 @@
 export default {
   data() {
     return {
-      newPost: this.created()
+      newPost: this.creatPost(),
+      cachePost: null
+    }
+  },
+  computed: {
+    isModifyMode () {
+      //유무확인, param.id가 있으면 없으면
+      const id = this.$route.params.id;
+      return id ? true : false;
+    }
+  },
+  created () {
+    const { isModifyMode } = this;
+    const { $store: { state: { postList } }, $route: { params: { id } } } = this;
+    
+    if(isModifyMode){
+      const post = postList.find(listItem=>{
+        return listItem.id === Number(id);
+      });
+
+      this.newPost = post;
+      this.modifyStart();
+    } else {
+      this.$router.push('/board-write');
     }
   },
   methods: {
-    created() {
-      return { title: '', type: null, desc: '', file: '', img: '' }
+    creatPost () {
+      return { title: '', type: null, desc: '', file: [], img: [] }
     },
-    add() {
-      const {
-        $store: { dispatch },
-        newPost
-      } = this;
-      //const { newPost } = this;
-      //const { state: { postList } } = this.$store;
+    changeBytes ( size ) {
+      if (size < 1024) return size + " Bytes";
+      else if(size < 1048576) return(size / 1024).toFixed(0) + " KB";
+      else if(size < 1073741824) return(size / 1048576).toFixed(2) + " MB";
+    },
+    handleFileChange( newPost, $event ) {
+      // console.log('newPost, $event', newPost, $event);
+      // console.log('file', $event.target.files);
+
+      const files = Array.from($event.target.files);
+
+      files.forEach((refFile)=>{
+        const { lastModified, lastModifiedDate, name, size, type, webkitRelativePath } = refFile;
+        const file = {
+          lastModified, lastModifiedDate, name, size, type, webkitRelativePath,
+          src: "",
+          loading: true,
+          ref:refFile
+        };
+
+        newPost.file.push(file);
+
+        setTimeout(()=>{
+          console.log('file uploaded');
+          file.loading = false;
+        },2000);
+      })
+      
+      //newPost.file = files;
+      // Array.isArray($event.target.files);
+      // console.log(Array.isArray($event.target.fileS));
+    },
+    handleImageChange( newPost, $event ) {
+      const files = Array.from($event.target.files);
+
+      files.forEach((refFile)=>{
+        const { lastModified, lastModifiedDate, name, size, type, webkitRelativePath } = refFile;
+        let src = URL.createObjectURL(refFile);
+
+        const file = {
+          lastModified, lastModifiedDate, name, size, type, webkitRelativePath,
+          src,
+          loading: true,
+          ref:refFile
+        };
+
+        newPost.img.push(file);
+
+        setTimeout(()=>{
+          console.log('file uploaded');
+          file.loading = false;
+        },2000);
+      })
+    },
+    add () {
+      const { newPost, $store: { dispatch } } = this;
       const item = { ...newPost };
 
-      // postList.push(item);
-      dispatch("add", item);
-
-      // this.newPost = this.created();
+      dispatch('add', item);
       this.$router.replace('/board-list');
+      // console.log('$store.state.postList', this.$store.state.postList)
+    },
+    modifyStart () {
+      this.cachePost = { ...this.newPost };
+    },
+    modify () {
+      this.cachePost = null;
+      // console.log('cachePost', this.cachePost);
+      this.$router.go(-1);
+      // this.$router.replace('/board-view/' + this.newPost.id );
+    },
+    cancle () {
+      // console.log(`this.newPost, this.cachePost`, this.newPost, this.cachePost);
+      Object.assign(this.newPost, this.cachePost);
+      this.$router.push('/board-view/' + this.newPost.id );
 
-      console.log('this.$store.state', this.$store.state);
-      console.log('item.title', item.title);
     },
-    handleChangeFile( newPost, $event ){
-      console.log('newPost, $event', newPost, $event);
-      const files = Array.from($event.target.files);
-      newPost.file = files;
+    fileDelete (target) {
+      const {
+        $store: { state : { postList } },
+        $router,
+        newPost
+       } = this;
+      newPost.file = newPost.file.filter((fileObject)=>{
+        return fileObject !== target;
+      });
     },
-    handleChangeImage( newPost, $event ){
-      console.log('newPost, $event', newPost, $event);
-      const images = Array.from($event.target.files);
-      newPost.img = images;
+    imgDelete(target) {
+      const {
+        $store: { state : { postList } },
+        $router,
+        newPost
+       } = this;
+      newPost.img = newPost.img.filter((imgObject)=>{
+        return imgObject !== target;
+      });
     }
   }
 }
 </script>
-
-
-<style>
-.write .list-horizon table td {
-  text-align: left;
-}
-</style>
