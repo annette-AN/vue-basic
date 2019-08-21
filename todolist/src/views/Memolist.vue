@@ -13,10 +13,6 @@
         <Memo type="listitem" :value="item" v-for="item in memoList"></Memo>
       </template>
     </section>
-
-    <div>
-      <pre v-html="$data"></pre>
-    </div>
   </div>
 </template>
 
